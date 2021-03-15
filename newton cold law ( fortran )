@@ -1,0 +1,35 @@
+ program newton cooling law
+      implicit none
+c t代表時間，T代表溫度
+      real r,time,tmax,T,Ts,Tin,dt
+      integer pgopen,i,steps
+
+      write (*,*) '請輸入冷卻係數'
+      read (*,*) r
+      write (*,*) '請輸入環境溫度'
+      read (*,*) Ts
+      write (*,*) '請輸入起始溫度'
+      read (*,*) Tin
+      write (*,*) '請輸入過了多久'
+      read (*,*) tmax
+      write (*,*) '請決定dt(建議1~5)'
+      read (*,*) dt
+      
+      if(pgopen('/xwin').le.0) stop
+      call pgpap (5.0,0.75)
+      call pgeras
+      call pgenv(0.0,tmax,0.0,100.0,0,0)
+      call pglab('Time (min)','Temperature (C)','Cooling Time')
+
+      steps = int(tmax/dt) 
+      T = Tin
+      call pgsci(2)
+      do i=1,steps
+        time = dt*i
+        T = T - r*(T-Ts)*dt
+        if (T.le.45.0) call pgsci(3)
+        call pgpt (1,time,T,-1)
+      end do
+      call pgcols
+      
+      end 
